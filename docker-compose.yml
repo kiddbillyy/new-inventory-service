@@ -1,0 +1,62 @@
+version: '3.8'
+
+networks:
+  orders-service_kafka_network:
+    external: true  # Usa la misma red que orders-service
+
+services:
+  inventory-service:
+    build: .
+    container_name: inventory-service
+    restart: always
+    ports:
+      - "5005:5005"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "win-hp03dio6fsk:192.168.0.165"
+    dns:
+      - 127.0.0.11
+      - 8.8.8.8
+      - 1.1.1.1
+    environment:
+      LOG_SAP: "1"
+      PORT: 5005
+      DB_HOST: host.docker.internal
+      DB_USER: user_inventory
+      DB_PASSWORD: Mimbral1579
+      DB_NAME: new_inventory_service_db
+      DB_PORT: 1433
+      KAFKA_BROKER: kafka:9092
+      KAFKA_CLIENT_ID: inventory-service
+      VTEX_APP_KEY: ${VTEX_APP_KEY}
+      VTEX_APP_TOKEN: ${VTEX_APP_TOKEN}
+      VTEX_ACCOUNT: ${VTEX_ACCOUNT}
+      VTEX_ENVIRONMENT: ${VTEX_ENVIRONMENT}
+      SAP_BASE_URL: ${SAP_BASE_URL}
+      SAP_COMPANY_DB: ${SAP_COMPANY_DB}
+      SAP_USERNAME: ${SAP_USERNAME}
+      SAP_PASSWORD: ${SAP_PASSWORD}
+    networks:
+      - orders-service_kafka_network
+
+  inventory-worker:
+    build: .
+    container_name: inventory-worker
+    restart: always
+    command: ["node","src/workers/cronRunner.js"]   # ⏱️ corre el cron cada 1 min
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "win-hp03dio6fsk:192.168.0.165"
+    environment:
+      DB_HOST: host.docker.internal
+      DB_USER: user_inventory
+      DB_PASSWORD: Mimbral1579
+      DB_NAME: new_inventory_service_db
+      DB_PORT: 1433
+      SAP_BASE_URL: ${SAP_BASE_URL}
+      SAP_COMPANY_DB: ${SAP_COMPANY_DB}
+      SAP_USERNAME: ${SAP_USERNAME}
+      SAP_PASSWORD: ${SAP_PASSWORD}
+      SAP_WORKER_BATCH: 10                 # procesa hasta 10 pendientes por corrida
+    networks:
+      - orders-service_kafka_network
