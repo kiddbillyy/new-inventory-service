@@ -337,41 +337,37 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-  subgraph Host[Host / VM]
-    subgraph Docker[Docker Engine]
-      subgraph Compose[docker-compose]
-        SVC[inventory-service
-(Express API)]
-        WRK[inventory-worker
-(cronRunner)]
+  subgraph Host["Host / VM"]
+    subgraph Docker["Docker Engine"]
+      subgraph Compose["docker-compose"]
+        SVC["inventory-service (Express API)"]
+        WRK["inventory-worker (cronRunner)"]
       end
     end
   end
 
-  NET[(orders-service_kafka_network)]
+  NET[("orders-service_kafka_network")]
   SVC --- NET
   WRK --- NET
 
-  KAFKA[(Kafka Cluster)] --- NET
+  KAFKA[("Kafka Cluster")] --- NET
 
-  DBINV[(SQL Server
-new_inventory_service_db)]
+  DBINV[/"SQL Server<br/>new_inventory_service_db"/]
   SVC <---> DBINV
   WRK <---> DBINV
 
-  SAPSL[(SAP Service Layer
-https://win-hp03dio6fsk:50000/b1s/v1)]
+  SAPSL["SAP Service Layer<br/>https://win-hp03dio6fsk:50000/b1s/v1"]
   SVC <---> SAPSL
   WRK <---> SAPSL
 
-  SAPDB[(SQL Server SAP
-OPOR/POR1)]
+  SAPDB[/"SQL Server SAP<br/>OPOR/POR1"/]
   WRK <---> SAPDB
 
-  VTEX[(VTEX SaaS)] --- SVC
+  VTEX["VTEX SaaS"] --- SVC
 
-  note right of SVC: Expuesto en :5005 (HTTP)
-  note left of DBINV: Credenciales DB_* (.env)
+  note right of SVC: "Expuesto en :5005 (HTTP)"
+  note left of DBINV: "Credenciales DB_* (.env)"
+
 ```
 
 ---
