@@ -365,8 +365,17 @@ flowchart TB
 
   VTEX["VTEX SaaS"] --- SVC
 
-  note right of SVC: "Expuesto en :5005 (HTTP)"
-  note left of DBINV: "Credenciales DB_* (.env)"
+  %% Notas como nodos aparte + aristas punteadas
+  NOTE1["Expuesto en :5005 (HTTP)"]
+  NOTE2["Credenciales DB_* (.env)"]
+
+  SVC -.-> NOTE1
+  DBINV -.-> NOTE2
+
+  %% Estilos opcionales para “notas”
+  classDef note fill:#fff,stroke:#999,stroke-dasharray: 5 5,color:#333;
+  class NOTE1,NOTE2 note;
+
 
 ```
 
