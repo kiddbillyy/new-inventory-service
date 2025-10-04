@@ -1,6 +1,13 @@
 const { getStockByWarehouse } = require('../services/stockService');
+
 async function getStockByWarehouseCtrl(req, res, next) {
-  try { res.json(await getStockByWarehouse({ sku: req.query.sku })); }
-  catch (err) { next(err); }
+  try {
+    const { sku, warehouseCode } = req.query;  // 👈 recibe ambos
+    const result = await getStockByWarehouse({ sku, warehouseCode });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
 }
+
 module.exports = { getStockByWarehouseCtrl };
