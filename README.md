@@ -299,40 +299,36 @@ Integración entre SAP Business One 10.0 y Mimbral OMS
 
 ```mermaid
 flowchart LR
-  subgraph ClientApps[Apps clientes]
-    UI[OMS / Backoffice / Integraciones]
+  subgraph ClientApps["Apps clientes"]
+    UI["OMS / Backoffice / Integraciones"]
   end
 
-  UI -->|REST| API[Inventory Service (Express)]
-  API --> Ctrls[Controllers]
-  Ctrls --> Svcs[Services]
-  Svcs --> Models[Models]
+  UI -->|REST| API["Inventory Service (Express)"]
+  API --> Ctrls["Controllers"]
+  Ctrls --> Svcs["Services"]
+  Svcs --> Models["Models"]
 
-  Models --> SQL[(SQL Server
-new_inventory_service_db)]
-  Svcs --> KFK[(Kafka Broker)]
-  Svcs --> SAPSL[(SAP B1
-Service Layer)]
-  Svcs --> VTEX[(VTEX API)]
+  SQL[/"SQL Server<br/>new_inventory_service_db"/]
+  Models --> SQL
+  Svcs --> KFK[("Kafka Broker")]
+  Svcs --> SAPSL["SAP B1<br/>Service Layer"]
+  Svcs --> VTEX["VTEX API"]
 
-  subgraph Workers[Workers & Cron]
-    CRON[cronRunner.js]
-    W1[sapWorker.dispatchBatch]
-    W2[sapPOFetcherDirect]
+  subgraph Workers["Workers & Cron"]
+    CRON["cronRunner.js"]
+    W1["sapWorker.dispatchBatch"]
+    W2["sapPOFetcherDirect"]
   end
 
   CRON --> W1
   CRON --> W2
   W1 -->|POST OPDN/OIGN/OIGE/OWTR| SAPSL
-  W2 --> SAPDB[(SAP DB
-OPOR/POR1)]
+  W2 --> SAPDB[/"SAP DB<br/>OPOR/POR1"/]
 
-  KFK -->|sap.purchaseorder.cancelled| CONSUMER[poEventsConsumer]
-  CONSUMER --> INBOX[(EventInbox /
-ProcessedEvents)]
+  KFK -->|sap.purchaseorder.cancelled| CONSUMER["poEventsConsumer"]
+  CONSUMER --> INBOX["EventInbox / ProcessedEvents"]
 
-  W1 --> SNAP[(SapDocuments
-Snapshots)]
+  W1 --> SNAP["SapDocuments (Snapshots)"]
 ```
 
 ---
